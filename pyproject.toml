@@ -1,0 +1,18 @@
+[project]
+name = "chatbot"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Meg Patakota"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "openllm (>=0.6.20,<0.7.0)",
+    "django (>=5.1.7,<6.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
