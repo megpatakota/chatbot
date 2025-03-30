@@ -8,4 +8,5 @@ env.bak/
 venv.bak/
 
 # 
-.SE
+# Ignore Django secret key
+chatbot_project/settings.py
