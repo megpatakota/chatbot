@@ -34,6 +34,9 @@ def home(request):
     if 'chat_sessions' not in request.session:
         request.session['chat_sessions'] = {}
     
+    # Check if API key is set
+    api_key_set = 'encrypted_api_key' in request.session
+    
     # Get chat_id from POST or query parameters
     chat_id = request.POST.get('chat_id') or request.GET.get('chat_id')
     
@@ -44,6 +47,12 @@ def home(request):
         ]
     
     if request.method == "POST":
+        # If no API key is set, return an error
+        if not api_key_set:
+            return JsonResponse({
+                "response": "API key required to use the chatbot. Please add your API key in the settings panel."
+            }, status=400)
+            
         user_input = request.POST.get("message", "")
         # Get the selected model or use default
         selected_model = request.POST.get("model", "gpt-3.5-turbo") 
@@ -64,16 +73,17 @@ def home(request):
                 user_api_key = None
                 api_provider = None
                 
+                # Inside your home function, update this part:
                 if 'encrypted_api_key' in request.session:
                     try:
                         # Decrypt the API key
                         cipher = get_cipher()
-                        encrypted_key = request.session['encrypted_api_key']
+                        encrypted_key_str = request.session['encrypted_api_key']
+                        encrypted_key = encrypted_key_str.encode('latin-1')  # Convert back to bytes
                         user_api_key = cipher.decrypt(encrypted_key).decode('utf-8')
                         api_provider = request.session.get('api_provider', 'openai')
                     except Exception as e:
                         print(f"Error decrypting API key: {e}")
-                
                 # Use Litellm's completion function with conversation history
                 response = completion(
                     model=selected_model,  # Use the selected model
@@ -107,10 +117,9 @@ def home(request):
     # For GET requests, pass the available models to the template
     context = {
         "available_models": AVAILABLE_MODELS,
-        "api_key_set": 'encrypted_api_key' in request.session
+        "api_key_set": api_key_set
     }
     return render(request, "megbot/chat.html", context)
-
 def save_api_key(request):
     """Save and encrypt user's API key"""
     if request.method == "POST":
@@ -128,8 +137,11 @@ def save_api_key(request):
             cipher = get_cipher()
             encrypted_key = cipher.encrypt(api_key.encode('utf-8'))
             
+            # Convert bytes to string for storage in session
+            encrypted_key_str = encrypted_key.decode('latin-1')  # Use latin-1 to preserve all byte values
+            
             # Store in session
-            request.session['encrypted_api_key'] = encrypted_key
+            request.session['encrypted_api_key'] = encrypted_key_str
             request.session['api_provider'] = provider
             request.session.modified = True
             

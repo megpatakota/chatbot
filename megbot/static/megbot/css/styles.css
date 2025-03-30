@@ -881,6 +881,80 @@ body.dark-mode .model-selector {
     display: none;
 }
 /* API Key Management Styles */
+.api-key-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+
+.api-key-modal {
+    background-color: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    width: 90%;
+    max-width: 500px;
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.api-key-modal h2 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.api-key-modal p {
+    margin-bottom: 1.5rem;
+    color: var(--secondary-color);
+}
+
+.api-key-input-container, 
+.api-provider-container {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.api-key-input-container label,
+.api-provider-container label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.highlight-required {
+    border-color: var(--danger-color) !important;
+    animation: pulse-error 2s 1;
+}
+
+@keyframes pulse-error {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+}
+
+.api-key-overlay.hidden {
+    display: none !important;
+}
+
+body.dark-mode .api-key-modal {
+    background-color: #1e1e1e;
+    color: #e5e5e5;
+}
+
+body.dark-mode .api-key-modal h2,
+body.dark-mode .api-key-modal p {
+    color: #e5e5e5;
+}
+
+body.dark-mode .api-key-modal a {
+    color: #93c5fd;
+}
 .api-key-section {
     flex-direction: column;
     align-items: flex-start;

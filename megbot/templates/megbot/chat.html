@@ -11,6 +11,33 @@
 </head>
 
 <body>
+    <div id="api-key-overlay" class="api-key-overlay">
+        <div class="api-key-modal">
+            <h2>Welcome to MegBot!</h2>
+            <p>To use this chatbot, you need to provide your own API key.</p>
+            
+            <div class="api-key-input-container">
+                <label for="initial-api-key">Enter your API key:</label>
+                <input type="password" id="initial-api-key" class="api-key-input" placeholder="API key from OpenAI, Anthropic, etc.">
+            </div>
+            
+            <div class="api-provider-container">
+                <label for="initial-api-provider">Provider:</label>
+                <select id="initial-api-provider" class="model-selector">
+                    <option value="openai">OpenAI</option>
+                    <option value="anthropic">Anthropic</option>
+                    <option value="google">Google AI</option>
+                </select>
+            </div>
+            
+            <button id="save-initial-key" class="btn btn-primary">Save Key & Start Chatting</button>
+            
+            <div class="api-key-info">
+                Your API key is encrypted and stored only for this session.
+                <a href="https://platform.openai.com/api-keys" target="_blank">Get an OpenAI API key</a>
+            </div>
+        </div>
+    </div>
     <!-- Sidebar -->
     <div id="sidebar" class="sidebar">
         <div class="sidebar-header">
@@ -112,6 +139,8 @@
                     </div>
                 </div>
             </header>
+
+
 
             <div class="chat-container">
                 <div class="chat-header">
