@@ -12,8 +12,8 @@ backend:
         # Install dependencies directly with pip instead of using Poetry groups
         - pip install django==5.1.7 litellm==1.65.0 python-dotenv==1.1.0 cryptography==44.0.2
         
-        # Run Django migrations and collect static files
-        - python manage.py collectstatic --noinput
+        # Create staticfiles directory without running collectstatic
+        - mkdir -p staticfiles
   artifacts:
     baseDirectory: /
     files:
