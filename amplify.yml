@@ -1,0 +1,45 @@
+version: 1
+backend:
+  phases:
+    build:
+      commands:
+        # Install poetry
+        - pip install poetry
+        
+        # Modify pyproject.toml to accept Python 3.10
+        - sed -i 's/python = ">=3.12"/python = ">=3.10"/g' pyproject.toml
+        
+        # Install dependencies directly with pip instead of using Poetry groups
+        - pip install django==5.1.7 litellm==1.65.0 python-dotenv==1.1.0 cryptography==44.0.2
+        
+        # Run Django migrations and collect static files
+        - python manage.py collectstatic --noinput
+  artifacts:
+    baseDirectory: /
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+
+frontend:
+  phases:
+    build:
+      commands: []
+  artifacts:
+    baseDirectory: /
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+      
+  customHeaders:
+    - pattern: '**/*'
+      headers:
+        - key: 'Cache-Control'
+          value: 'max-age=86400'
+    - pattern: 'static/**/*'
+      headers:
+        - key: 'Cache-Control'
+          value: 'max-age=31536000'
