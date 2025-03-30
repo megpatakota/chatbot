@@ -1,26 +1,47 @@
 version: 1
 backend:
   phases:
+    preBuild:
+      commands:
+        - echo "Starting preBuild phase"
+        - python --version
+        - pip --version
+        - ls -la
     build:
       commands:
-        # Install poetry
+        - echo "Starting build phase"
+        # Install poetry and dependencies
         - pip install poetry
-        
-        # Modify pyproject.toml to accept Python 3.10
         - sed -i 's/python = ">=3.12"/python = ">=3.10"/g' pyproject.toml
+        - pip install django==5.1.7 litellm==1.65.0 python-dotenv==1.1.0 cryptography==44.0.2 whitenoise==6.5.0
         
-        # Install dependencies directly with pip instead of using Poetry groups
-        - pip install django==5.1.7 litellm==1.65.0 python-dotenv==1.1.0 cryptography==44.0.2
+        # Debug filesystem
+        - echo "Current directory structure:"
+        - ls -la
         
-        # Add environment variable for non-interactive mode
+        # Create necessary .env file with safe defaults
+        - echo "Creating .env file"
+        - echo "SECRET_KEY=temp-key-for-build-process-only" > .env
+        - echo "DEBUG=False" >> .env
+        
+        # Set environment variables
         - export DJANGO_SETTINGS_MODULE=chatbot_project.settings
         - export PYTHONPATH=$(pwd)
         
-        # Create a temporary .env file with a SECRET_KEY
-        - echo "SECRET_KEY=temp-key-for-build-process-only" > .env
+        # Run Django check to verify configuration
+        - echo "Running Django check"
+        - python manage.py check
         
         # Run collectstatic
-        - python manage.py collectstatic --noinput
+        - echo "Running collectstatic"
+        - python manage.py collectstatic --noinput --verbosity 2
+        
+        # Final checks
+        - echo "Checking staticfiles directory"
+        - ls -la staticfiles/
+        
+        # Create a basic URL checker page
+        - echo "<html><body><h1>App is running!</h1></body></html>" > staticfiles/check.html
   artifacts:
     baseDirectory: /
     files:
@@ -33,12 +54,15 @@ frontend:
   phases:
     preBuild:
       commands:
-        - echo "Setting up frontend assets"
+        - echo "Starting frontend preBuild phase"
     build:
       commands:
-        - echo "No frontend build steps required"
+        - echo "Starting frontend build phase"
+        # Simple HTML page to ensure something is being served
+        - mkdir -p public
+        - echo "<html><head><title>MegBot</title></head><body><h1>MegBot is loading...</h1><p>If you see this page, static files are working but Django may not be.</p><p><a href='/check.html'>Check static file serving</a></p></body></html>" > public/index.html
   artifacts:
-    baseDirectory: /
+    baseDirectory: public
     files:
       - '**/*'
   cache:
@@ -49,7 +73,7 @@ frontend:
     - pattern: '**/*'
       headers:
         - key: 'Cache-Control'
-          value: 'max-age=86400'
+          value: 'no-store'
     - pattern: 'static/**/*'
       headers:
         - key: 'Cache-Control'
