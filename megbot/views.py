@@ -2,6 +2,10 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from litellm import completion  # Importing Litellm's completion function
 import json
+from django.conf import settings
+from cryptography.fernet import Fernet
+import os
+import base64
 
 # Define available models
 AVAILABLE_MODELS = {
@@ -10,6 +14,20 @@ AVAILABLE_MODELS = {
     'claude-3-haiku': 'Claude 3 Haiku',
     'gemini-1.5-pro': 'Gemini 1.5 Pro'
 }
+
+# Generate an encryption key if not already created
+def get_or_create_key():
+    key = getattr(settings, 'FERNET_KEY', None)
+    if not key:
+        # Generate a key and store it in settings (for this session only)
+        key = Fernet.generate_key()
+        settings.FERNET_KEY = key
+    return key
+
+# Initialize the encryption utility
+def get_cipher():
+    key = get_or_create_key()
+    return Fernet(key)
 
 def home(request):
     # Initialize or get chat sessions from the session if it doesn't exist
@@ -42,11 +60,27 @@ def home(request):
                     {"role": "user", "content": user_input}
                 )
                 
+                # Check if user has their own API key
+                user_api_key = None
+                api_provider = None
+                
+                if 'encrypted_api_key' in request.session:
+                    try:
+                        # Decrypt the API key
+                        cipher = get_cipher()
+                        encrypted_key = request.session['encrypted_api_key']
+                        user_api_key = cipher.decrypt(encrypted_key).decode('utf-8')
+                        api_provider = request.session.get('api_provider', 'openai')
+                    except Exception as e:
+                        print(f"Error decrypting API key: {e}")
+                
                 # Use Litellm's completion function with conversation history
                 response = completion(
                     model=selected_model,  # Use the selected model
                     messages=conversation_history,
-                    max_tokens=500
+                    max_tokens=500,
+                    api_key=user_api_key,  # Use user's API key if available
+                    api_base=None  # This would be configured based on provider if needed
                 )
                 
                 print("Bot response:", response)
@@ -72,9 +106,48 @@ def home(request):
     
     # For GET requests, pass the available models to the template
     context = {
-        "available_models": AVAILABLE_MODELS
+        "available_models": AVAILABLE_MODELS,
+        "api_key_set": 'encrypted_api_key' in request.session
     }
     return render(request, "megbot/chat.html", context)
+
+def save_api_key(request):
+    """Save and encrypt user's API key"""
+    if request.method == "POST":
+        api_key = request.POST.get("api_key")
+        provider = request.POST.get("provider", "openai")
+        
+        if not api_key:
+            return JsonResponse({
+                "status": "error", 
+                "message": "API key is required"
+            })
+        
+        try:
+            # Encrypt the API key
+            cipher = get_cipher()
+            encrypted_key = cipher.encrypt(api_key.encode('utf-8'))
+            
+            # Store in session
+            request.session['encrypted_api_key'] = encrypted_key
+            request.session['api_provider'] = provider
+            request.session.modified = True
+            
+            return JsonResponse({
+                "status": "success",
+                "message": "API key saved successfully"
+            })
+        except Exception as e:
+            print(f"Error encrypting API key: {e}")
+            return JsonResponse({
+                "status": "error",
+                "message": "Failed to encrypt API key"
+            })
+    
+    return JsonResponse({
+        "status": "error",
+        "message": "Invalid request method"
+    })
 
 def clear_history(request):
     """API endpoint to clear conversation history of a specific chat or all chats"""
