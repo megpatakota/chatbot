@@ -1,47 +1,33 @@
 version: 1
 backend:
   phases:
-    preBuild:
-      commands:
-        - echo "Starting preBuild phase"
-        - python --version
-        - pip --version
-        - ls -la
     build:
       commands:
-        - echo "Starting build phase"
-        # Install poetry and dependencies
+        # Install poetry
         - pip install poetry
+        
+        # Modify pyproject.toml to accept Python 3.10
         - sed -i 's/python = ">=3.12"/python = ">=3.10"/g' pyproject.toml
-        - pip install django==5.1.7 litellm==1.65.0 python-dotenv==1.1.0 cryptography==44.0.2 whitenoise==6.5.0
         
-        # Debug filesystem
-        - echo "Current directory structure:"
-        - ls -la
+        # Install dependencies directly with pip with correct versions
+        # First install pydantic v2 (required by LiteLLM)
+        - pip install pydantic==2.4.2
         
-        # Create necessary .env file with safe defaults
-        - echo "Creating .env file"
-        - echo "SECRET_KEY=temp-key-for-build-process-only" > .env
-        - echo "DEBUG=False" >> .env
+        # Then install other dependencies
+        - pip install django==5.1.7 python-dotenv==1.1.0 cryptography==44.0.2 whitenoise==6.5.0
         
-        # Set environment variables
+        # Install LiteLLM last to ensure correct dependencies
+        - pip install litellm==1.65.0
+        
+        # Add environment variable for non-interactive mode
         - export DJANGO_SETTINGS_MODULE=chatbot_project.settings
         - export PYTHONPATH=$(pwd)
         
-        # Run Django check to verify configuration
-        - echo "Running Django check"
-        - python manage.py check
+        # Create a temporary .env file with a SECRET_KEY
+        - echo "SECRET_KEY=temp-key-for-build-process-only" > .env
         
         # Run collectstatic
-        - echo "Running collectstatic"
-        - python manage.py collectstatic --noinput --verbosity 2
-        
-        # Final checks
-        - echo "Checking staticfiles directory"
-        - ls -la staticfiles/
-        
-        # Create a basic URL checker page
-        - echo "<html><body><h1>App is running!</h1></body></html>" > staticfiles/check.html
+        - python manage.py collectstatic --noinput
   artifacts:
     baseDirectory: /
     files:
@@ -54,15 +40,12 @@ frontend:
   phases:
     preBuild:
       commands:
-        - echo "Starting frontend preBuild phase"
+        - echo "Setting up frontend assets"
     build:
       commands:
-        - echo "Starting frontend build phase"
-        # Simple HTML page to ensure something is being served
-        - mkdir -p public
-        - echo "<html><head><title>MegBot</title></head><body><h1>MegBot is loading...</h1><p>If you see this page, static files are working but Django may not be.</p><p><a href='/check.html'>Check static file serving</a></p></body></html>" > public/index.html
+        - echo "No frontend build steps required"
   artifacts:
-    baseDirectory: public
+    baseDirectory: /
     files:
       - '**/*'
   cache:
@@ -73,7 +56,7 @@ frontend:
     - pattern: '**/*'
       headers:
         - key: 'Cache-Control'
-          value: 'no-store'
+          value: 'max-age=86400'
     - pattern: 'static/**/*'
       headers:
         - key: 'Cache-Control'
