@@ -63,6 +63,11 @@ body {
     border-bottom: 1px solid #e2e8f0;
 }
 
+body.dark-mode .sidebar-header {
+    border-color: #2d2d2d;
+}
+
+
 .sidebar-title {
     font-weight: 600;
     font-size: 1.1rem;
@@ -71,6 +76,11 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+body.dark-mode .sidebar-title {
+    color: #e5e5e5;
+}
+
 
 .sidebar.collapsed .sidebar-title {
     display: none;
@@ -234,6 +244,11 @@ body {
     height: 100vh;
     overflow: hidden;
 }
+
+body.dark-mode .main-content {
+    background-color: #121212;
+}
+
 .container {
     width: 100%;
     max-width: 1200px;
@@ -250,10 +265,10 @@ body {
     display: flex;
     align-items: center;
     padding: 1rem 0;
-    border-bottom: 1px solid #e2e8f0;
     margin-bottom: 1.5rem;
     flex-shrink: 0; /* Prevent header from shrinking */
 }
+
 
 .logo {
     display: flex;
@@ -264,8 +279,12 @@ body {
     color: var(--primary-color);
 }
 
+body.dark-mode .logo {
+    color: #d8b4fe; /* Lighter purple for better contrast */
+}
+
 .logo img {
-    width: 40px;
+    width: 50px;
     height: 40px;
     border-radius: 50%;
 }
@@ -517,6 +536,10 @@ body {
     animation: pulse 2s infinite;
 }
 
+body.dark-mode .chat-welcome-icon {
+    color: #d8b4fe;
+}
+
 @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.1); }
@@ -528,13 +551,17 @@ body {
     font-weight: 600;
     color: var(--primary-color);
 }
-
+body.dark-mode .chat-welcome h3 {
+    color: #d8b4fe; /* Lighter purple for better contrast */
+}
 .chat-welcome p {
     color: var(--secondary-color);
     max-width: 600px;
     margin: 0 auto;
 }
-
+body.dark-mode .chat-welcome p {
+    color: #e5e5e5;
+}
 /* Theme toggle styles */
 .theme-toggle {
     margin-left: auto;
@@ -645,7 +672,7 @@ body.dark-mode .sidebar {
     border-color: #2d2d2d;
 }
 
-body.dark-mode .sidebar-header,
+body.dark-mode ,
 body.dark-mode .sidebar-footer {
     border-color: #2d2d2d;
 }
@@ -663,7 +690,7 @@ body.dark-mode .chat-container {
     border-color: #2d2d2d;
 }
 
-body.dark-mode .chat-header,
+body.dark-mode .chat-header ,
 body.dark-mode .chat-input-container {
     background-color: #1e1e1e;
     border-color: #2d2d2d;
