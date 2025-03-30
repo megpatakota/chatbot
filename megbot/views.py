@@ -185,19 +185,3 @@ def clear_history(request):
     request.session.modified = True
     return JsonResponse({"status": "success", "message": "Conversation history cleared"})
 
-
-def debug(request):
-    from django.http import HttpResponse
-    return HttpResponse("Django is running correctly!")
-
-# Add this new view to your existing views.py
-
-def welcome(request):
-    """
-    A simple welcome view that doesn't depend on external APIs.
-    This can help diagnose if the issue is with your home view's external dependencies.
-    """
-    return render(request, 'megbot/welcome.html', {
-        'title': 'Welcome to MegBot',
-        'message': 'Your Django application is running correctly!'
-    })
