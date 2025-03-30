@@ -10,9 +10,8 @@ backend:
       commands:
         - echo "Starting build phase"
         
-        # Install dependencies with pip - specific order for compatibility
+        # Install dependencies from requirements.txt
         - pip install --upgrade pip
-        - pip install pydantic==1.10.13
         - pip install -r requirements.txt
         
         # Create static directory if it doesn't exist
