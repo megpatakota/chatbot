@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (saveInitialKeyBtn) {
         console.log('Initial save button found, adding event listener');
-        saveInitialKeyBtn.addEventListener('click', function() {
+        saveInitialKeyBtn.addEventListener('click', function () {
             console.log('Save Initial Key button clicked');
             handleSaveInitialKey();
         });
@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function () {
      */
     function handleSaveInitialKey() {
         const apiKey = initialApiKeyInput.value.trim();
-        
+
         if (!apiKey) {
             initialApiKeyInput.classList.add('highlight-required');
             setTimeout(() => {
@@ -250,11 +250,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 2000);
             return;
         }
-        
+
         // Show loading state
         saveInitialKeyBtn.textContent = 'Saving...';
         saveInitialKeyBtn.disabled = true;
-        
+
         // Send API key to server for encryption and storage
         fetch('/save_api_key/', {
             method: 'POST',
@@ -267,55 +267,55 @@ document.addEventListener('DOMContentLoaded', function () {
                 'provider': initialApiProviderSelect.value
             })
         })
-        .then(response => {
-            console.log('Response status:', response.status);
-            return response.json();
-        })
-        .then(data => {
-            console.log('Response data:', data);
-            
-            // Reset button state
-            saveInitialKeyBtn.textContent = 'Save Key & Start Chatting';
-            saveInitialKeyBtn.disabled = false;
-            
-            if (data.status === 'success') {
-                console.log('API key saved successfully!');
-                
-                // Update preferences
-                userPreferences.hasApiKey = true;
-                userPreferences.apiProvider = initialApiProviderSelect.value;
-                saveUserPreferences();
-                
-                // Update the settings panel if it exists
-                if (apiKeyInput) {
-                    apiKeyInput.value = '••••••••••••••••';
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+
+                // Reset button state
+                saveInitialKeyBtn.textContent = 'Save Key & Start Chatting';
+                saveInitialKeyBtn.disabled = false;
+
+                if (data.status === 'success') {
+                    console.log('API key saved successfully!');
+
+                    // Update preferences
+                    userPreferences.hasApiKey = true;
+                    userPreferences.apiProvider = initialApiProviderSelect.value;
+                    saveUserPreferences();
+
+                    // Update the settings panel if it exists
+                    if (apiKeyInput) {
+                        apiKeyInput.value = '••••••••••••••••';
+                    }
+                    if (saveApiKeyBtn) {
+                        saveApiKeyBtn.textContent = 'Update';
+                    }
+                    if (apiProviderSelect) {
+                        apiProviderSelect.value = initialApiProviderSelect.value;
+                    }
+
+                    // Hide overlay - Force this with direct style manipulation too
+                    if (apiKeyOverlay) {
+                        apiKeyOverlay.classList.add('hidden');
+                        apiKeyOverlay.style.display = 'none';
+                        console.log('Added hidden class to overlay');
+                    }
+                } else {
+                    alert('Failed to save API key: ' + (data.message || 'Unknown error'));
                 }
-                if (saveApiKeyBtn) {
-                    saveApiKeyBtn.textContent = 'Update';
-                }
-                if (apiProviderSelect) {
-                    apiProviderSelect.value = initialApiProviderSelect.value;
-                }
-                
-                // Hide overlay - Force this with direct style manipulation too
-                if (apiKeyOverlay) {
-                    apiKeyOverlay.classList.add('hidden');
-                    apiKeyOverlay.style.display = 'none';
-                    console.log('Added hidden class to overlay');
-                }
-            } else {
-                alert('Failed to save API key: ' + (data.message || 'Unknown error'));
-            }
-        })
-        .catch(error => {
-            console.error('Detailed error:', error);
-            
-            // Reset button state
-            saveInitialKeyBtn.textContent = 'Save Key & Start Chatting';
-            saveInitialKeyBtn.disabled = false;
-            
-            alert('Error saving API key. Please try again.');
-        });
+            })
+            .catch(error => {
+                console.error('Detailed error:', error);
+
+                // Reset button state
+                saveInitialKeyBtn.textContent = 'Save Key & Start Chatting';
+                saveInitialKeyBtn.disabled = false;
+
+                alert('Error saving API key. Please try again.');
+            });
     }
 
     /**
@@ -323,20 +323,20 @@ document.addEventListener('DOMContentLoaded', function () {
      */
     function handleSaveApiKey() {
         const apiKey = apiKeyInput.value.trim();
-        
+
         // If the input is empty, show error
         if (!apiKey) {
             showApiKeyStatus('Please enter a valid API key', false);
             return;
         }
-        
+
         // Skip validation for masked keys - allow submitting the form
         // even if the key hasn't changed (for testing connection)
         if (apiKey === '••••••••••••••••') {
             showApiKeyStatus('API key is already saved', true);
             return;
         }
-        
+
         // Send API key to server for encryption and storage
         fetch('/save_api_key/', {
             method: 'POST',
@@ -349,27 +349,27 @@ document.addEventListener('DOMContentLoaded', function () {
                 'provider': apiProviderSelect.value
             })
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                // Update UI
-                apiKeyInput.value = '••••••••••••••••';
-                saveApiKeyBtn.textContent = 'Update';
-                
-                // Update preferences
-                userPreferences.hasApiKey = true;
-                userPreferences.apiProvider = apiProviderSelect.value;
-                saveUserPreferences();
-                
-                showApiKeyStatus('API key saved successfully!', true);
-            } else {
-                showApiKeyStatus(data.message || 'Failed to save API key', false);
-            }
-        })
-        .catch(error => {
-            console.error('Error saving API key:', error);
-            showApiKeyStatus('Error saving API key. Please try again.', false);
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Update UI
+                    apiKeyInput.value = '••••••••••••••••';
+                    saveApiKeyBtn.textContent = 'Update';
+
+                    // Update preferences
+                    userPreferences.hasApiKey = true;
+                    userPreferences.apiProvider = apiProviderSelect.value;
+                    saveUserPreferences();
+
+                    showApiKeyStatus('API key saved successfully!', true);
+                } else {
+                    showApiKeyStatus(data.message || 'Failed to save API key', false);
+                }
+            })
+            .catch(error => {
+                console.error('Error saving API key:', error);
+                showApiKeyStatus('Error saving API key. Please try again.', false);
+            });
     }
 
     /**
@@ -720,13 +720,44 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error clearing history:', error));
     }
 
+    // Add a resize event listener that will collapse the sidebar when window is resized
+    window.addEventListener('resize', function() {
+        if (sidebar && !sidebarManuallyToggled) {
+            // When window is being resized, force the sidebar to collapsed state
+            sidebar.classList.add('collapsed');
+            
+            // Update user preferences to match
+            userPreferences.sidebarCollapsed = true;
+            saveUserPreferences();
+            
+            // On mobile, also ensure mobile-visible is removed (for the mobile view)
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('mobile-visible');
+            }
+        }
+    });
     /**
      * Toggle sidebar visibility
      */
+    let sidebarManuallyToggled = false;
+
+    // Modify the toggleSidebar function to allow expanding/collapsing at any screen size
     function toggleSidebar() {
+        // Toggle the collapsed class
         sidebar.classList.toggle('collapsed');
+        
+        // Update user preferences
         userPreferences.sidebarCollapsed = sidebar.classList.contains('collapsed');
         saveUserPreferences();
+        
+        // Mark that the sidebar was manually toggled
+        sidebarManuallyToggled = true;
+        
+        // Set a timeout to reset the manually toggled flag after a short delay
+        // This prevents the resize handler from immediately collapsing a just-expanded sidebar
+        setTimeout(() => {
+            sidebarManuallyToggled = false;
+        }, 500);
     }
 
     /**

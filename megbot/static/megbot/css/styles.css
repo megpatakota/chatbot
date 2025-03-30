@@ -53,8 +53,13 @@ body {
 
 .sidebar.collapsed {
     width: 60px;
-    /* keep fixed on mobile or screen collapse*/
+    transition: width 0.3s ease;
     
+}
+/* Main content should adjust when sidebar is collapsed */
+.sidebar.collapsed + .main-content {
+    margin-left: 60px;
+    width: calc(100% - 60px);
 }
 
 .sidebar-header {
@@ -770,37 +775,49 @@ body.dark-mode .settings-option {
 
 /* Mobile styles and responsiveness */
 @media (max-width: 768px) {
+    /* Keep the sidebar visible in collapsed state */
     .sidebar {
         position: fixed;
         top: 0;
         bottom: 0;
         left: 0;
         z-index: 1000;
-        transform: translateX(-100%);
+        transform: translateX(0) !important; /* Never hide completely */
         box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     }
     
+    /* Collapsed state styling on mobile */
+    .sidebar.collapsed {
+        width: 60px;
+    }
+    
+    /* Only expand when explicitly made visible */
     .sidebar.mobile-visible {
-        transform: translateX(0);
+        width: 280px;
     }
     
+    /* Default main content positioning with collapsed sidebar */
     .main-content {
-        width: 100%;
+        margin-left: 60px;
+        width: calc(100% - 60px);
     }
     
-    .message {
-        max-width: 85%;
+    /* Hide text in collapsed sidebar */
+    .sidebar.collapsed .sidebar-title,
+    .sidebar.collapsed .chat-title,
+    .sidebar.collapsed .chat-time,
+    .sidebar.collapsed .delete-chat,
+    .sidebar.collapsed .sidebar-footer span,
+    .sidebar.collapsed .new-chat-btn span {
+        display: none;
     }
     
-    .chat-welcome {
-        padding: 1.5rem;
-    }
-    
-    .theme-toggle {
-        margin-right: 0.5rem;
+    /* Adjust new chat button in collapsed state */
+    .sidebar.collapsed .new-chat-btn {
+        padding: 0.75rem;
+        justify-content: center;
     }
 }
-
 
 @media (max-width: 480px) {
     .chat-header h2 {
