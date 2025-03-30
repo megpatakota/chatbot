@@ -180,3 +180,8 @@ def clear_history(request):
     
     request.session.modified = True
     return JsonResponse({"status": "success", "message": "Conversation history cleared"})
+
+
+def debug(request):
+    from django.http import HttpResponse
+    return HttpResponse("Django is running correctly!")
