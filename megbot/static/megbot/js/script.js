@@ -323,12 +323,20 @@ document.addEventListener('DOMContentLoaded', function () {
      */
     function handleSaveApiKey() {
         const apiKey = apiKeyInput.value.trim();
-
-        if (!apiKey || apiKey === '••••••••••••••••') {
+        
+        // If the input is empty, show error
+        if (!apiKey) {
             showApiKeyStatus('Please enter a valid API key', false);
             return;
         }
-
+        
+        // Skip validation for masked keys - allow submitting the form
+        // even if the key hasn't changed (for testing connection)
+        if (apiKey === '••••••••••••••••') {
+            showApiKeyStatus('API key is already saved', true);
+            return;
+        }
+        
         // Send API key to server for encryption and storage
         fetch('/save_api_key/', {
             method: 'POST',
@@ -341,27 +349,27 @@ document.addEventListener('DOMContentLoaded', function () {
                 'provider': apiProviderSelect.value
             })
         })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    // Update UI
-                    apiKeyInput.value = '••••••••••••••••';
-                    saveApiKeyBtn.textContent = 'Update';
-
-                    // Update preferences
-                    userPreferences.hasApiKey = true;
-                    userPreferences.apiProvider = apiProviderSelect.value;
-                    saveUserPreferences();
-
-                    showApiKeyStatus('API key saved successfully!', true);
-                } else {
-                    showApiKeyStatus(data.message || 'Failed to save API key', false);
-                }
-            })
-            .catch(error => {
-                console.error('Error saving API key:', error);
-                showApiKeyStatus('Error saving API key. Please try again.', false);
-            });
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Update UI
+                apiKeyInput.value = '••••••••••••••••';
+                saveApiKeyBtn.textContent = 'Update';
+                
+                // Update preferences
+                userPreferences.hasApiKey = true;
+                userPreferences.apiProvider = apiProviderSelect.value;
+                saveUserPreferences();
+                
+                showApiKeyStatus('API key saved successfully!', true);
+            } else {
+                showApiKeyStatus(data.message || 'Failed to save API key', false);
+            }
+        })
+        .catch(error => {
+            console.error('Error saving API key:', error);
+            showApiKeyStatus('Error saving API key. Please try again.', false);
+        });
     }
 
     /**
