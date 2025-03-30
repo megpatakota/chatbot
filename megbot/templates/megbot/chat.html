@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MegBot | AI Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'megbot/css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <img src="{% static 'megbot/img/avatar.png' %}" alt="MegBot Logo" onerror="this.src='https://via.placeholder.com/40'">
+                <span>MegBot</span>
+            </div>
+            
+            <div class="theme-toggle">
+                <input type="checkbox" id="theme-toggle" class="toggle-checkbox">
+                <label for="theme-toggle" class="toggle-label">
+                    <div class="toggle-icons">
+                        <i class="fas fa-sun"></i>
+                        <i class="fas fa-moon"></i>
+                    </div>
+                </label>
+            </div>
+            
+            <button id="settings-button" class="btn btn-outline btn-icon">
+                <i class="fas fa-cog"></i>
+            </button>
+            
+            <div id="settings-panel" class="settings-panel">
+                <h3>Settings</h3>
+                <div class="settings-option">
+                    <span>Model</span>
+                    <select id="model-selector" class="model-selector">
+                        {% for model_id, model_name in available_models.items %}
+                            <option value="{{ model_id }}">{{ model_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="settings-option">
+                    <span>Dark Mode</span>
+                    <input type="checkbox" id="theme-toggle-settings" class="toggle-checkbox">
+                    <label for="theme-toggle-settings" class="toggle-label"></label>
+                </div>
+            </div>
+        </header>
+
+        <div class="chat-container">
+            <div class="chat-header">
+                <h2>AI Assistant</h2>
+                <div class="chat-header-actions">
+                    <button id="clear-button" class="btn btn-outline">
+                        <i class="fas fa-trash-alt"></i>
+                        <span class="d-none d-md-inline">&nbsp;Clear Chat</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="chat-container" class="messages-container">
+                <div class="chat-welcome">
+                    <i class="fas fa-robot chat-welcome-icon"></i>
+                    <h3>Welcome to MegBot!</h3>
+                    <p>I'm your AI assistant, ready to help with information, answer questions, and have insightful conversations. How can I assist you today?</p>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <form id="message-form" class="chat-form">
+                    {% csrf_token %}
+                    <button type="button" id="voice-input-btn" class="voice-input-btn">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <input 
+                        type="text" 
+                        id="user-input" 
+                        class="chat-input"
+                        placeholder="Type your message here..." 
+                        required
+                    >
+                    <button type="submit" id="send-button" class="submit-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; {% now "Y" %} MegBot AI Assistant. All rights reserved.</p>
+    </footer>
+
+    <script src="{% static 'megbot/js/script.js' %}"></script>
+</body>
+</html>
