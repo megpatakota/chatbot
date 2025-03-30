@@ -110,10 +110,14 @@ def home(request):
                 request.session.modified = True
                 
                 return JsonResponse({"response": response_text})
+
             except Exception as e:
-                print(f"Error: {e}")
-                return JsonResponse({"response": f"Sorry, an error occurred: {str(e)}"}, status=500)
-    
+                # If any exception occurs, render a basic error template
+                print(f"Error in home view: {e}")
+                return render(request, "megbot/error.html", {
+                    "error_message": "An error occurred while loading the application. Please try again later.",
+                    "debug": str(e) if settings.DEBUG else ""
+                })
     # For GET requests, pass the available models to the template
     context = {
         "available_models": AVAILABLE_MODELS,
@@ -185,3 +189,15 @@ def clear_history(request):
 def debug(request):
     from django.http import HttpResponse
     return HttpResponse("Django is running correctly!")
+
+# Add this new view to your existing views.py
+
+def welcome(request):
+    """
+    A simple welcome view that doesn't depend on external APIs.
+    This can help diagnose if the issue is with your home view's external dependencies.
+    """
+    return render(request, 'megbot/welcome.html', {
+        'title': 'Welcome to MegBot',
+        'message': 'Your Django application is running correctly!'
+    })

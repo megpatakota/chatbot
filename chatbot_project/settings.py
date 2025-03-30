@@ -72,7 +72,7 @@ TEMPLATES = [
         },
     },
 ]
-
+# Only enable template debugging in development
 TEMPLATES[0]['OPTIONS']['debug'] = True
 
 WSGI_APPLICATION = 'chatbot_project.wsgi.application'

@@ -1,32 +1,37 @@
 version: 1
 backend:
   phases:
+    preBuild:
+      commands:
+        - echo "Starting preBuild phase"
+        - python --version
+        - pip --version
     build:
       commands:
-        # Install poetry
-        - pip install poetry
+        - echo "Starting build phase"
         
-        # Modify pyproject.toml to accept Python 3.10
-        - sed -i 's/python = ">=3.12"/python = ">=3.10"/g' pyproject.toml
-        
-        # Install dependencies directly with pip with correct versions
-        # First install pydantic v2 (required by LiteLLM)
+        # Install dependencies in the correct order with exact versions
+        - pip install --upgrade pip
         - pip install pydantic==2.4.2
-        
-        # Then install other dependencies
-        - pip install django==5.1.7 python-dotenv==1.1.0 cryptography==44.0.2 whitenoise==6.5.0
-        
-        # Install LiteLLM last to ensure correct dependencies
+        - pip install django==5.1.7 python-dotenv==1.1.0 cryptography==44.0.2 whitenoise==6.5.0 gunicorn==21.2.0
         - pip install litellm==1.65.0
         
-        # Add environment variable for non-interactive mode
+        # Create static directory if it doesn't exist
+        - mkdir -p static
+        
+        # Copy app static files to the project static directory
+        - if [ -d "megbot/static" ]; then cp -r megbot/static/* static/; fi
+        
+        # Environment setup
+        - echo "SECRET_KEY=temp-key-for-build-process-only" > .env
+        - echo "DEBUG=False" >> .env
         - export DJANGO_SETTINGS_MODULE=chatbot_project.settings
         - export PYTHONPATH=$(pwd)
         
-        # Create a temporary .env file with a SECRET_KEY
-        - echo "SECRET_KEY=temp-key-for-build-process-only" > .env
+        # Run Django check
+        - python manage.py check
         
-        # Run collectstatic
+        # Collect static files
         - python manage.py collectstatic --noinput
   artifacts:
     baseDirectory: /
@@ -38,12 +43,8 @@ backend:
 
 frontend:
   phases:
-    preBuild:
-      commands:
-        - echo "Setting up frontend assets"
     build:
-      commands:
-        - echo "No frontend build steps required"
+      commands: []
   artifacts:
     baseDirectory: /
     files:
@@ -56,7 +57,7 @@ frontend:
     - pattern: '**/*'
       headers:
         - key: 'Cache-Control'
-          value: 'max-age=86400'
+          value: 'no-store'
     - pattern: 'static/**/*'
       headers:
         - key: 'Cache-Control'
