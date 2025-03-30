@@ -15,12 +15,13 @@
         <div class="api-key-modal">
             <h2>Welcome to MegBot!</h2>
             <p>To use this chatbot, you need to provide your own API key.</p>
-            
+
             <div class="api-key-input-container">
                 <label for="initial-api-key">Enter your API key:</label>
-                <input type="password" id="initial-api-key" class="api-key-input" placeholder="API key from OpenAI, Anthropic, etc.">
+                <input type="password" id="initial-api-key" class="api-key-input"
+                    placeholder="API key from OpenAI, Anthropic, etc.">
             </div>
-            
+
             <div class="api-provider-container">
                 <label for="initial-api-provider">Provider:</label>
                 <select id="initial-api-provider" class="model-selector">
@@ -29,9 +30,9 @@
                     <option value="google">Google AI</option>
                 </select>
             </div>
-            
+
             <button id="save-initial-key" class="btn btn-primary">Save Key & Start Chatting</button>
-            
+
             <div class="api-key-info">
                 Your API key is encrypted and stored only for this session.
                 <a href="https://platform.openai.com/api-keys" target="_blank">Get an OpenAI API key</a>
@@ -180,6 +181,23 @@
         </div>
     </div>
 
+    <!-- Load utilities first -->
+    <script src="{% static 'megbot/js/utils/dom.js' %}"></script>
+    <script src="{% static 'megbot/js/utils/storage.js' %}"></script>
+    <script src="{% static 'megbot/js/utils/formatters.js' %}"></script>
+    <script src="{% static 'megbot/js/utils/api.js' %}"></script>
+
+    <!-- Load models next -->
+    <script src="{% static 'megbot/js/models/user-prefs.js' %}"></script>
+    <script src="{% static 'megbot/js/models/chat-model.js' %}"></script>
+
+    <!-- Load features -->
+    <script src="{% static 'megbot/js/features/voice.js' %}"></script>
+    <script src="{% static 'megbot/js/features/settings.js' %}"></script>
+    <script src="{% static 'megbot/js/features/sidebar.js' %}"></script>
+    <script src="{% static 'megbot/js/features/chat.js' %}"></script>
+
+    <!-- Load main script last -->
     <script src="{% static 'megbot/js/script.js' %}"></script>
 </body>
 
