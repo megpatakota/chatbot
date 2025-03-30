@@ -53,6 +53,8 @@ body {
 
 .sidebar.collapsed {
     width: 60px;
+    /* keep fixed on mobile or screen collapse*/
+    
 }
 
 .sidebar-header {
@@ -121,6 +123,7 @@ body.dark-mode .sidebar-title {
 
 .sidebar.collapsed .new-chat-btn {
     padding: 0.75rem;
+    
 }
 
 .sidebar.collapsed .new-chat-btn span {
@@ -160,7 +163,7 @@ body.dark-mode .sidebar-title {
 .chat-item .chat-icon {
     flex-shrink: 0;
     font-size: 1rem;
-    color: var(--secondary-color);
+    color: var(--primary-light);
 }
 
 .chat-item .chat-title {
@@ -514,9 +517,9 @@ body.dark-mode .logo {
 
 .footer {
     text-align: center;
-    padding: 1rem;
+    padding: 0.2rem;
     color: var(--secondary-color);
-    font-size: 0.875rem;
+    font-size: 0.65rem;
     flex-shrink: 0; /* Prevent footer from shrinking */
 }
 
@@ -616,7 +619,7 @@ body.dark-mode .chat-welcome p {
 
 .toggle-icons i {
     font-size: 14px;
-    color: #fff;
+    color: var(--secondary-color);
 }
 
 /* Settings panel */
@@ -785,20 +788,6 @@ body.dark-mode .settings-option {
         width: 100%;
     }
     
-    .mobile-sidebar-toggle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        border: none;
-        background: none;
-        color: var(--secondary-color);
-        font-size: 1.25rem;
-        cursor: pointer;
-        margin-right: 0.5rem;
-    }
-    
     .message {
         max-width: 85%;
     }
@@ -812,11 +801,6 @@ body.dark-mode .settings-option {
     }
 }
 
-@media (min-width: 769px) {
-    .mobile-sidebar-toggle {
-        display: none;
-    }
-}
 
 @media (max-width: 480px) {
     .chat-header h2 {
