@@ -12,8 +12,15 @@ backend:
         # Install dependencies directly with pip instead of using Poetry groups
         - pip install django==5.1.7 litellm==1.65.0 python-dotenv==1.1.0 cryptography==44.0.2
         
-        # Create staticfiles directory without running collectstatic
-        - mkdir -p staticfiles
+        # Add environment variable for non-interactive mode
+        - export DJANGO_SETTINGS_MODULE=chatbot_project.settings
+        - export PYTHONPATH=$(pwd)
+        
+        # Create a temporary .env file with a SECRET_KEY
+        - echo "SECRET_KEY=temp-key-for-build-process-only" > .env
+        
+        # Run collectstatic
+        - python manage.py collectstatic --noinput
   artifacts:
     baseDirectory: /
     files:
@@ -24,8 +31,12 @@ backend:
 
 frontend:
   phases:
+    preBuild:
+      commands:
+        - echo "Setting up frontend assets"
     build:
-      commands: []
+      commands:
+        - echo "No frontend build steps required"
   artifacts:
     baseDirectory: /
     files:
