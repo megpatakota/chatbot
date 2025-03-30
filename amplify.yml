@@ -5,14 +5,13 @@ backend:
       commands:
         - echo "Starting preBuild phase"
         - python --version
-        - pip install poetry==1.7.1
-        - poetry config virtualenvs.create false
+        - pip --version
     build:
       commands:
         - echo "Starting build phase"
         
-        # Install dependencies using Poetry
-        - poetry install --no-interaction --no-ansi
+        # Install dependencies with pip
+        - pip install -r requirements.txt
         
         # Create static directory if it doesn't exist
         - mkdir -p static
@@ -37,7 +36,6 @@ backend:
       - '**/*'
   cache:
     paths:
-      - .venv/**/*
       - node_modules/**/*
 
 frontend:
