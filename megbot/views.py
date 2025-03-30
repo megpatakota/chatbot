@@ -124,6 +124,7 @@ def home(request):
         "api_key_set": api_key_set
     }
     return render(request, "megbot/chat.html", context)
+
 def save_api_key(request):
     """Save and encrypt user's API key"""
     if request.method == "POST":

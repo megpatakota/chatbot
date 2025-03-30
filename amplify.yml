@@ -1,0 +1,28 @@
+version: 1
+backend:
+  phases:
+    build:
+      commands:
+        - pip install poetry
+        - poetry config virtualenvs.create false
+        - poetry install
+        - python manage.py collectstatic --noinput
+  artifacts:
+    baseDirectory: .
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+frontend:
+  phases:
+    build:
+      commands:
+        - echo "No frontend build required"
+  artifacts:
+    baseDirectory: static
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
