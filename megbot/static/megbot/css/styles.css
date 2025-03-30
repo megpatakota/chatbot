@@ -6,7 +6,8 @@
     --primary-light: #f3e8ff;
     --secondary-color: #64748b;
     --accent-color: #f0e6d8;
-    --background-color: #fbf9f6;
+    --gradient-start: #fef7e2;
+    --gradient-end: #f3e7f6;
     --sidebar-bg: #f8f8f8;
     --sidebar-hover: #f1f1f1;
     --sidebar-active: #ede9fe;
@@ -27,7 +28,8 @@
 
 body {
     font-family: var(--font-sans);
-    background-color: var(--background-color);
+    background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+    background-attachment: fixed;
     color: var(--dark-color);
     line-height: 1.5;
     display: flex;
@@ -35,6 +37,7 @@ body {
     height: 100vh;
     overflow: hidden;
 }
+
 
 /* Sidebar Styles */
 .sidebar {
@@ -594,7 +597,7 @@ body {
     position: absolute;
     right: 1rem;
     top: 4rem;
-    width: 220px;
+    width: 300px;
     background-color: white;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
