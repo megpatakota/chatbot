@@ -10,7 +10,9 @@ backend:
       commands:
         - echo "Starting build phase"
         
-        # Install dependencies with pip
+        # Install dependencies with pip - specific order for compatibility
+        - pip install --upgrade pip
+        - pip install pydantic==1.10.13
         - pip install -r requirements.txt
         
         # Create static directory if it doesn't exist
@@ -37,25 +39,3 @@ backend:
   cache:
     paths:
       - node_modules/**/*
-
-frontend:
-  phases:
-    build:
-      commands: []
-  artifacts:
-    baseDirectory: /
-    files:
-      - '**/*'
-  cache:
-    paths:
-      - node_modules/**/*
-      
-  customHeaders:
-    - pattern: '**/*'
-      headers:
-        - key: 'Cache-Control'
-          value: 'no-store'
-    - pattern: 'static/**/*'
-      headers:
-        - key: 'Cache-Control'
-          value: 'max-age=31536000'
